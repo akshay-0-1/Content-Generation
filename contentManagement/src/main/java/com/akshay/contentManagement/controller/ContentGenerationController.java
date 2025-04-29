@@ -5,32 +5,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/content")
 public class ContentGenerationController {
-
     private final ContentGenerationService contentGenerationService;
 
     public ContentGenerationController(ContentGenerationService contentGenerationService) {
         this.contentGenerationService = contentGenerationService;
     }
 
-    @GetMapping("/notes")
-    public ResponseEntity<String> getNotes(@RequestParam String topic) {
-        return ResponseEntity.ok(contentGenerationService.generateNotes(topic));
-    }
+    @GetMapping
+    public ResponseEntity<String> generateContent(
+            @RequestParam String type,
+            @RequestParam String input) {
 
-    @GetMapping("/caption")
-    public ResponseEntity<String> getCaption(@RequestParam String topic) {
-        return ResponseEntity.ok(contentGenerationService.generateCaption(topic));
-    }
-
-    @GetMapping("/blog")
-    public ResponseEntity<String> getBlog(@RequestParam String topic) {
-        return ResponseEntity.ok(contentGenerationService.generateBlog(topic));
-    }
-
-    @PostMapping("/summary")
-    public ResponseEntity<String> getSummary(@RequestBody String text) {
-        return ResponseEntity.ok(contentGenerationService.generateSummary(text));
+        return ResponseEntity.ok(contentGenerationService.generateContent(type.toLowerCase(), input));
     }
 }

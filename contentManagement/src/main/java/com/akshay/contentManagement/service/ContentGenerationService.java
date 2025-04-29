@@ -13,13 +13,35 @@ public class ContentGenerationService {
     private String apiKey;
 
     private final RestTemplate restTemplate;
+
     private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-002:generateContent?key=";
 
     public ContentGenerationService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    // Common Gemini API caller
+    public String generateContent(String type, String input) {
+        String prompt;
+        switch (type) {
+            case "notes":
+                prompt = "Give a short, simple note about '" + input + "'.";
+                break;
+            case "caption":
+                prompt = "Write a creative Instagram caption for: '" + input + "'.";
+                break;
+            case "blog":
+                prompt = "Write a detailed blog post about: '" + input + "'.";
+                break;
+            case "summary":
+                prompt = "Summarize the following content in a few lines: '" + input + "'.";
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported content type: " + type);
+        }
+
+        return callGeminiAPI(prompt);
+    }
+
     private String callGeminiAPI(String prompt) {
         String requestBody = "{"
                 + "\"contents\": ["
@@ -45,26 +67,5 @@ public class ContentGenerationService {
         );
 
         return GeminiResponseParser.extractText(responseEntity.getBody());
-    }
-
-    // Individual services
-    public String generateNotes(String topic) {
-        String prompt = "Give a short, simple note about '" + topic + "'.";
-        return callGeminiAPI(prompt);
-    }
-
-    public String generateCaption(String topic) {
-        String prompt = "Write a creative Instagram caption for: '" + topic + "'.";
-        return callGeminiAPI(prompt);
-    }
-
-    public String generateBlog(String topic) {
-        String prompt = "Write a detailed blog post about: '" + topic + "'.";
-        return callGeminiAPI(prompt);
-    }
-
-    public String generateSummary(String text) {
-        String prompt = "Summarize the following content in a few lines: '" + text + "'.";
-        return callGeminiAPI(prompt);
     }
 }
